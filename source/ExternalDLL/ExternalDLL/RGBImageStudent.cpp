@@ -1,76 +1,90 @@
 #include "RGBImageStudent.h"
 
+void RGBImageStudent::_fill_image_container(const RGBImageStudent &other, const int &width, const int &height ) {
+	for (int row = 0; row < height; ++row) {
+		for (int col = 0; col < width; ++col) {
+			image_container[row][col] = other.getPixel(col, row);
+		}
+	}
+}
+
+void RGBImageStudent::_init_image_container(const int &width, const int &height) {
+	image_container = new RGB*[height];
+	for (int i = 0; i < height; ++i) {
+		image_container[i] = new RGB[width];
+	}
+}
+
 RGBImageStudent::RGBImageStudent() : RGBImage() {
-	int throwError = 0, e = 1 / throwError; //Throws error without the need to include a header
 	//TODO: Nothing
 }
 
-RGBImageStudent::RGBImageStudent(const RGBImageStudent &other) : RGBImage(other.getWidth(), other.getHeight()) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: Create a copy from the other object
+RGBImageStudent::RGBImageStudent(const RGBImageStudent &other) :
+	RGBImage( other.getWidth(), other.getHeight() )
+{
+	int width = other.getWidth();
+	int height = other.getHeight();
+	_init_image_container(width, height);
+	_fill_image_container(other, width, height);
 }
 
-
-RGBImageStudent::RGBImageStudent(const int width, const int height) : RGBImage(width, height) {
-	int throwError = 0, e = 1 / throwError;
+RGBImageStudent::RGBImageStudent(const int width, const int height) : 
+	RGBImage( width, height )
+{
 	//TODO: Initialize pixel storage
+	_init_image_container(width, height);
 }
 
 RGBImageStudent::~RGBImageStudent() {
-	int throwError = 0, e = 1 / throwError;
 	//TODO: delete allocated objects
+	for (int i = 0; i < getHeight(); ++i) {
+		delete[] image_container[i];
+	}
+	delete[] image_container;
 }
 
 void RGBImageStudent::set(const int width, const int height) {
 	RGBImage::set(width, height);
-	int throwError = 0, e = 1 / throwError;
+	_init_image_container(width, height);
 	//TODO: resize or create a new pixel storage (Don't forget to delete the old storage)
 }
 
 void RGBImageStudent::set(const RGBImageStudent &other) {
-	RGBImage::set(other.getWidth(), other.getHeight());
-	int throwError = 0, e = 1 / throwError;
+	int width = other.getWidth();
+	int height = other.getHeight();
+	RGBImage::set(width, height );
+	_init_image_container(width, height);
+	_fill_image_container(other, width, height);
 	//TODO: resize or create a new pixel storage and copy the object (Don't forget to delete the old storage)
 }
 
 void RGBImageStudent::setPixel(int x, int y, RGB pixel) {
-	int throwError = 0, e = 1 / throwError;
+	image_container[y][x] = pixel;
 	//TODO: no comment needed :)
 }
 
 void RGBImageStudent::setPixel(int i, RGB pixel) {
-	int throwError = 0, e = 1 / throwError;
-	/*
-	* TODO: set pixel i in "Row-Major Order"
-	*
-	*
-	* Original 2d image (values):
-	* 9 1 2
-	* 4 3 5
-	* 8 7 8
-	*
-	* 1d representation (i, value):
-	* i		value
-	* 0		9
-	* 1		1
-	* 2		2
-	* 3		4
-	* 4		3
-	* 5		5
-	* 6		8
-	* 7		7
-	* 8		8
-	*/
+	int width = getWidth();
+	image_container[ (int)std::floor( i / width ) ][ i % width ] = pixel;
 }
 
 RGB RGBImageStudent::getPixel(int x, int y) const {
-	int throwError = 0, e = 1 / throwError;
 	//TODO: no comment needed :)
-	return 0;
+	return image_container[y][x];
 }
 
 RGB RGBImageStudent::getPixel(int i) const {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: see setPixel(int i, RGB pixel)
-	return 0;
+	int width = getWidth();
+	return image_container[(int)std::floor(i / width)][i % width];
 }
+
+//IntensityImageStudent RGBImageStudent::to_intensity(RGBImage & other) {
+//	IntensityImageStudent temp;
+//	return temp.parse_rgb_image(other);
+//}
+
+//IntensityImageStudent RGBImageStudent::to_intensity(RGBImage & other, int shades_of_grey) {
+//	IntensityImageStudent temp;
+//	return temp.parse_rgb_image(other, shades_of_grey);
+//}
+
